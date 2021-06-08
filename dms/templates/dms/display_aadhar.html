@@ -49,7 +49,13 @@
 						<!-- Collect the nav links, forms, and other content for toggling -->
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav navbar-right">
-        						<li><a href="../logout">logout</a></li>
+								<li><a href={% url "index" %}>Home</a></li>
+								{% if user.is_authenticated %}
+        						<li><a href={% url "logout" %}>Logout</a></li>
+        						{% else %}
+								<li><a href="registration">Signup</a></li>
+        						<li><a href="login">Login</a></li>
+        						{% endif %}
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">About Us<span class="caret"></span></a>
 									<ul class="dropdown-menu" role="menu">
@@ -62,13 +68,18 @@
 					</div><!-- /.container-fluid -->
 				</nav>
 			</header>
+			{% load img_tag %}
               <div>
             Aadhar Number : {{user.username}}<br>
             {% for i in aadhar %}
             {% if i.Aadhar_Number|stringformat:"s" == user.username %}
                 Name : {{i.fName}} {{i.mName}} {{i.lName}}<br>
-				{{i.Image}}
-				<img src="../../../dms/images/800px-Ada_Lovelace_portrait.jpg"><br>
+				Picture : 
+				{% comment %} <img src="../../../dms/images/800px-Ada_Lovelace_portrait.jpg"><br> {% endcomment %}
+				{%with img_src=i.Image|modify_url%}
+					<img src="{% static img_src %}" width="100px" height="100px">
+				{%endwith%}
+				<br>
 				Age : {{i.Age}}<br>
 				sex : {{i.Sex}}<br>
 				Date of birth : {{i.DOB}}<br>

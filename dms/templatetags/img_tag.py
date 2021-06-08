@@ -3,6 +3,7 @@ register = template.Library()
 
 
 def modify_url(img_url):
+    img_url = str(img_url)
     return img_url.split("/")[-1]
 
 
