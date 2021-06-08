@@ -1,13 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
+	<!-- Header Start -->
 	<head>
 		<meta charset="utf-8">
-		<title>AmendEasy- Registration</title>
-		{% load static %}
+		<title>AmendEasy</title>
 		<!-- Description, Keywords and Author -->
-		<meta name="description" content="Your description">
-		<meta name="keywords" content="Your,Keywords">
-		<meta name="author" content="ResponsiveWebInc">
+		<meta name="description" content="AmendEasy ">
+		<meta name="keywords" content="Aadhar,Pan,Ration,Driving,Voter,Document Modification,Change in Documents">
+		<meta name="author" content="Taukir Khatri | Devansh Shah | Ketul Patel">
 		
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		
@@ -19,21 +20,20 @@
 		<!-- Custom CSS -->
 		<link href="{% static 'dms/css/style.css' %}" rel="stylesheet">
 		
-		
 		<!-- Favicon -->
 		<link rel="shortcut icon" href="#">
 	</head>
+	<!-- Header End -->
 	
 	<body>
-		
+	
 		<div class="wrapper">
-		
-			<!-- header -->
+			<!-- Body Header (NavBar) -->
 			<header>
 				<!-- navigation -->
 				<nav class="navbar navbar-default" role="navigation">
 					<div class="container">
-						<!-- Brand and toggle get grouped for better mobile display -->
+
 						<div class="navbar-header">
 							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 								<span class="sr-only">Toggle navigation</span>
@@ -47,12 +47,16 @@
 						<!-- Collect the nav links, forms, and other content for toggling -->
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav navbar-right">
-								<li><a href="../registration">Signup</a></li>
-								<li><a href="../login">Login</a></li>
-								<li><a href="../">Home</a></li>
+								{% if user.is_authenticated %}
+        							<li><a href="logout">Logout</a></li>
+        						{% else %}
+									<li><a href="{%url 'login'%}">Login</a></li>
+									<li><a href="{%url 'adminLogin'%}">Admin</a></li>
+									<li><a href="{%url 'index'%}">Home</a></li>
+        						{% endif %}
 							</ul>
-						</div><!-- /.navbar-collapse -->
-					</div><!-- /.container-fluid -->
+						</div>
+					</div>
 				</nav>
 			</header>
 			
@@ -66,24 +70,24 @@
 						<form action="" method="post" role="form" id="register-form" enctype="multipart/form-data">
 							{% csrf_token %}
 							<div class="form-group">
-								<input type="text" class="form-control" id="exampleInputName1" placeholder="Full Name">
+								<input type="text" class="form-control" placeholder="Full Name" required>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter Aadhar Number" name="aadhar">
+								<input type="text" class="form-control" placeholder="Enter Aadhar Number" name="aadhar" required>
 							</div>
 							<div class="form-group">
-								<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name="password">
+								<input type="password" class="form-control" placeholder="Password" name="password" required>
 							</div>
 							<div class="form-group">
-								<input type="password" class="form-control" id="exampleInputPassword2" placeholder="Re-Password" name="re-pass">
+								<input type="password" class="form-control" placeholder="Re-Password" name="re-pass" required>
 							</div>
 							<div class="checkbox form-group">
 								<label>
-									<input type="checkbox"> I agree with all terms and conditions.
+									<input type="checkbox" required> I agree with all terms and conditions.
 								</label>
 							</div>
 							<div class="checkbox form-group">
-								<label><br>Upload your fingerprint : <input type="file" name="fingerprint" id="fileToUpload" enctype="multipart/form-data">
+								<label><br>Upload your fingerprint : <input type="file" name="fingerprint" id="fileToUpload" enctype="multipart/form-data" required>
 								</label>
 							</div>
 
@@ -91,7 +95,7 @@
                                 <input type="text" id="capt" readonly="readonly" >
                                 <div id="refresh"> <img src="{%static 'refresh.png'%}" height='50px' width="50px" onclick="cap()"></div>
                         
-                                <input type="text" id="textinput" placeholder="enter..">
+                                <input type="text" id="textinput" placeholder="Enter.." required>
                             </div>
 
 							<button type="submit" class="btn btn-default" onClick="return validcap();">SignUp</button>&nbsp;

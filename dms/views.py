@@ -18,6 +18,8 @@ def index(request):
 
 def registration(request):
     if request.method == 'POST':
+
+        # Getting Form Data
         aadhar = int(request.POST.get("aadhar"))
         password = request.POST.get("password")
         re_pass = request.POST.get("re-pass")
@@ -25,41 +27,62 @@ def registration(request):
         Aadhar_data = Aadhar.objects.all()
         signup_data = user.objects.all()
 
+        # First Check if user with same Aadhar is registred already
         all_accounts = signup_data.values_list()
         aadhar_numbers_available = [i[1] for i in all_accounts]
+
         if aadhar in aadhar_numbers_available:
-            messages.error(request, "Aadhar Number already exists...")
+            messages.error(
+                request, "User with same Aadhar Number already exists...")
             return redirect("registration")
+
+        # Then Check if Password and Confirm Passwords are matching or not
         if password == re_pass:
+
+            # Getting all the available aadhars
             data = Aadhar_data.values_list()
             aadhar_numbers = [i[0] for i in data]
+
+            # Flag for checking if aadhar provided by user is there in actual database or not
+            # if it is available then assign corresponding fingerprint's path to y1
             f = 0
             for i, x in enumerate(aadhar_numbers):
                 if aadhar == x:
                     y1 = "./images/" + data[i][-1]
                     f = 1
                     break
+
             if f == 0:
                 messages.error(
                     request, "Aadhar Number not found... Go to the nearest SevaSadan and apply for new Aadhar...")
                 return redirect("index")
+
+            # Now make an entry in signup table
             ins = signup(Aadhar_Number=aadhar, fp_User=fp)
             ins.save()
+
             signup_data = signup.objects.using('system').all()
             data = signup_data.values_list()
+
+            # Getting all registered users aadhars available in actual database for getting the path of user fingerprint
             aadhar_numbers = [i[1] for i in data]
             for i, x in enumerate(aadhar_numbers):
                 if aadhar == x:
                     y2 = "./images/" + data[i][-1]
 
+            # Making a command to run for fingerprint authentication
+            # i.e. Executing finger_match.py file for given image and actual fingerprint image of user from actual database
             command = "python ./dms/finger_match.py "+y1+" "+y2
             finger_match_output = subprocess.check_output(
                 ['python', './dms/finger_match.py', y1, y2])
+
             finger_match_output = str(finger_match_output).strip()
             finger_match_output = finger_match_output[2:]
             finger_match_output = finger_match_output[:len(
                 finger_match_output)-5]
+
             if finger_match_output == "Fingerprint matches":
+                # Make an entry for this user in Django's User table
                 new_user = User.objects.create_user(
                     username=aadhar, password=password)
                 messages.error(request, "Account Created Successfully...")
@@ -363,12 +386,6 @@ def voterid1(request):
 
 def display_aadhar(request):
     aadhar = Aadhar.objects.all()
-    #data = aadhar.values_list()
-    #aadhar_numbers = [i[0] for i in data]
-    # print(aadhar_numbers)
-    # aadharindex=aadhar_numbers.index(int(request.user.username))
-    # img=data[aadharindex][1]
-    # img="../../../"+img
     return render(request, 'dms/display_aadhar.html', {'aadhar': aadhar})
 
 
@@ -489,25 +506,8 @@ def adminSignup(request):
         else:
             messages.error(request, "Passwords do not match...")
             return redirect("registration")
-
-        # if EmpId in EmpIds:
-         #   if password==re_pass:
-          #      new_user = User.objects.create_user(is_staff=True,username=EmpId, password=password)
-           #     messages.error(request, "Account Created Successfully...")
-            #    return redirect("adminLogin")
-        # else:
-         #   messages.error(request, "Invalid information...try again")
-          #  return redirect("adminSignup")
     else:
         return render(request, 'dms/adminSignup.html')
-
-
-# def dashboard(request):
-#     if request.user.is_authenticated:
-#         return render(request, 'dms/dashboard.html')
-#     else:
-#         messages.info(request, "Please log in first.")
-#         return redirect('adminLogin')
 
 
 def dashboard(request):
@@ -516,10 +516,9 @@ def dashboard(request):
             all_queries = aadharQ.objects.using("system").all().values_list()
             data = {}
             for i in all_queries:
-                data[i[1]] = str(request.build_absolute_uri()) + \
-                    "/change/"+str(i[1])
+                data[i[1]] = str(request.build_absolute_uri()
+                                 ) + "/change/"+str(i[1])
 
-            # print("Path: ", str(request.build_absolute_uri()))
             return render(request, "dms/dashboard.html", {"all_queries": data})
         else:
             messages.error(
@@ -539,13 +538,11 @@ def doc_verification(request, user):
 
     metadata = aadharQ._meta.get_fields()
     col_names = []
-    # print(whole_data)
     for i in range(len(metadata)):
         col_names.append(str(list(metadata)[i]).split(".")[-1])
     col_names = col_names[1:]
 
     for k, i in enumerate(all_queries):
-        # print(i.address_proof)
         if str(i.AadharNo) == str(user):
             whole_data = whole_data[k]
             data = i
@@ -557,14 +554,12 @@ def doc_verification(request, user):
 
         if str(i[0]) == str(user):
             aadhar_data_user = list(i)
-    # print("aadhar data user: ", aadhar_data_user)
 
     metadata_aadhar = Aadhar._meta.get_fields()
     col_names_aadhar = []
     for i in range(len(metadata_aadhar)):
         col_names_aadhar.append(str(list(metadata_aadhar)[i]).split(".")[-1])
     col_names_aadhar = col_names_aadhar[5:]
-    # print("colums_aadhar: ", col_names_aadhar)
 
     whole_data = list(whole_data)[1:]
     if f == 0:
@@ -578,7 +573,6 @@ def doc_verification(request, user):
 
 def aorr(request):
     col_names = request.POST.get("col_names").split(",")
-    # print("Col names: ", col_names[0])
     user_aadhar = int(col_names[0])
     print(user_aadhar)
     cols = []
@@ -590,9 +584,6 @@ def aorr(request):
             cols.append(i[6:])
             vals.append(j)
             data[i[6:]] = j
-
-    # print("Columns: ", cols)
-    # print("Values: ", vals)
 
     ins = aadhar_status(Actual_AadharNo=user_aadhar, AadharNo=data["AadharNo"], FirstName=data["FirstName"], MidName=data["MidName"], LastName=data["LastName"], Street=data[
         "Street"], city=data["city"], pincode=data["pincode"], address_proof=data["address_proof"], Sex=data['Sex'], Mobile_Number=data["Mobile_Number"], DOB=data["DOB"], birth_proof=data["birth_proof"])
@@ -614,8 +605,6 @@ def aadhar_query_status(request):
 
     if(len(all_queries) == 0):
         return render(request, 'dms/aadhar_status.html', {"entries": "No application found!"})
-    # print("Aadhar_status: ", all_queries)
-    # print("All queries: ", all_queries_queries)
     all_queries_aadhars = []
     for i in all_queries:
         all_queries_aadhars.append(i[1])
@@ -634,15 +623,12 @@ def aadhar_query_status(request):
     for i in range(1, len(col_names_metadata)):
         col_names.append(str(list(col_names_metadata)[i]).split(".")[-1])
 
-    # print("Col_Names: ", col_names)
     status_values = []
     id_to_remove_status_query = -1
     for i in all_queries:
         if str(i[1]) == str(request.user):
             id_to_remove_status_query = list(i)[0]
             status_values = list(i)[1:]
-    # print("Id to be removed from query: ", id_to_remove_query)
-    # print("Id to be removed from status: ", id_to_remove_status_query)
 
     if id_to_remove_query == -1 or id_to_remove_status_query == -1:
         return render(request, 'dms/aadhar_status.html', {"entries": "No application found!"})
@@ -656,8 +642,6 @@ def aadhar_query_status(request):
             f = 1
             break
 
-    # check if query accepted or rejected
-    # f = 0 means accepted, f = 1 means rejected
     if f == 0:
         active_user = int(str(request.user))
 
@@ -668,8 +652,6 @@ def aadhar_query_status(request):
 
         for i in aadhar_all_objects:
             if i[0] == active_user:
-                # print("Matched: ", i)
-                # print("Query: ", current_query)
 
                 current_query_fname = current_query[1]
                 current_query_mname = current_query[2]
@@ -679,8 +661,6 @@ def aadhar_query_status(request):
                 current_query_pincode = current_query[6]
                 current_query_sex = current_query[8]
                 current_query_mobile = current_query[9]
-
-                # print("Current Query Fname: ", current_query_fname)
 
                 aadhar_to_be_updated.fName = current_query_fname
                 aadhar_to_be_updated.mName = current_query_mname
@@ -692,8 +672,6 @@ def aadhar_query_status(request):
                 aadhar_to_be_updated.Mobile_NUmber = current_query_mobile
 
                 aadhar_to_be_updated.save()
-                # print("After updation: ", aadhar_to_be_updated)
-                # print(aadhar_to_be_updated.fName)
                 break
 
     zipped_values = zip(col_names, status_values)
@@ -706,5 +684,4 @@ def aadhar_query_status(request):
     temp = aadhar_status.objects.filter(id=id_to_remove_status_query)
     temp.delete()
 
-    # print("Object: ", temp)
     return render(request, "dms/aadhar_status.html", {"zipped_values": zipped_values})
