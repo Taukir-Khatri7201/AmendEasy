@@ -1,13 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
+	<!-- Header Start -->
 	<head>
 		<meta charset="utf-8">
-		<title>AmendEasy - Login</title>
-		{% load static %}
+		<title>AmendEasy</title>
 		<!-- Description, Keywords and Author -->
-		<meta name="description" content="Your description">
-		<meta name="keywords" content="Your,Keywords">
-		<meta name="author" content="ResponsiveWebInc">
+		<meta name="description" content="AmendEasy ">
+		<meta name="keywords" content="Aadhar,Pan,Ration,Driving,Voter,Document Modification,Change in Documents">
+		<meta name="author" content="Taukir Khatri | Devansh Shah | Ketul Patel">
 		
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		
@@ -22,17 +23,17 @@
 		<!-- Favicon -->
 		<link rel="shortcut icon" href="#">
 	</head>
+	<!-- Header End -->
 	
 	<body>
 	
 		<div class="wrapper">
-		
-			<!-- header -->
+			<!-- Body Header (NavBar) -->
 			<header>
 				<!-- navigation -->
 				<nav class="navbar navbar-default" role="navigation">
 					<div class="container">
-						<!-- Brand and toggle get grouped for better mobile display -->
+
 						<div class="navbar-header">
 							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 								<span class="sr-only">Toggle navigation</span>
@@ -46,14 +47,26 @@
 						<!-- Collect the nav links, forms, and other content for toggling -->
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav navbar-right">
-								<li><a href="../registration">Signup</a></li>
-								<li><a href="../login">Login</a></li>
-								<li><a href="../">Home</a></li>
+								{% if user.is_authenticated %}
+        							<li><a href="logout">Logout</a></li>
+        						{% else %}
+									<li><a href="{%url 'registration'%}">Signup</a></li>
+									<li><a href="{%url 'login'%}">Login</a></li>
+									<li><a href="{%url 'adminLogin'%}">Admin</a></li>
+        						{% endif %}
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">About Us<span class="caret"></span></a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="#">How it works?</a></li>
+										<li><a href="#">Why us?</a></li>
+									</ul>
+								</li>
 							</ul>
-						</div><!-- /.navbar-collapse -->
-					</div><!-- /.container-fluid -->
+						</div>
+					</div>
 				</nav>
 			</header>
+			<!-- Body Header (NavBar) End -->
 			
 			<!-- banner -->
 			<div class="banner">
@@ -80,7 +93,7 @@
                                 <input type="text" id="capt" readonly="readonly" >
                                 <div id="refresh"> <img src="{%static 'refresh.png'%}" height='50px' width="50px" onclick="cap()"></div>
                         
-                                <input type="text" id="textinput" placeholder="Enter...">
+                                <input type="text" id="textinput" placeholder="Enter Captcha Code...">
                             </div>
 
 							<button type="submit" class="btn btn-default" onClick="return validcap();">Login</button>

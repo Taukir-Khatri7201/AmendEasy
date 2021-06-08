@@ -3,7 +3,8 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.models import *
 from dms.models import *
-from dms import app
+from dms.models import Aadhar, AdminInfo, DrivingLicence, PanCard, Ration, RationQ, VoterId, aadharQ, aadhar_status, licenceQ, pancardQ, signup, signup1, user, voteridQ
+
 import subprocess
 import os
 import matplotlib.pyplot as plt
@@ -80,19 +81,6 @@ def login(request):
         aadhar = int(request.POST.get("AadharNo"))
         password = request.POST.get("password")
         user = auth.authenticate(username=aadhar, password=password)
-        # login_data=userlogin.objects.using('system').all()
-        # data=login_data.values_list()
-        #aadhar_numbers = [i[1] for i in data]
-        #passw = [i[2] for i in data]
-        # for x in aadhar_numbers:
-        #   if x==aadhar:
-        #       for y in passw:
-        #          if y==password:
-        #             messages.info(request,"You are successfully logged in.")
-        #            return redirect("index")
-        # else:
-        #   messages.info(request,"Invalid details, Please try again!")
-        #  return redirect("login")
         if user is not None:
             auth.login(request, user)
             messages.info(request, "Logged in Successfully...")
@@ -131,9 +119,6 @@ def aadhar1(request):
         dob = request.POST.get("dob")
         birth_proof = request.FILES.get("birth_proof")
 
-        print("Address Proof: ", address_proof)
-        print("Birth Proof: ", birth_proof)
-
         Aadhar_data = Aadhar.objects.all()
         data = Aadhar_data.values_list()
         row = -1
@@ -146,7 +131,6 @@ def aadhar1(request):
         streetdb = [i[12] for i in data]
         citydb = [i[13] for i in data]
         pincodedb = [i[14] for i in data]
-        # aadhar_nums = [i[]]
 
         for fname in fnames:
             row = row+1
