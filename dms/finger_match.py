@@ -3,7 +3,7 @@ import os
 import sys
 import numpy
 import matplotlib.pyplot as plt
-from enhance import image_enhance
+import image_enhance
 from skimage.morphology import skeletonize, thin
 
 
@@ -74,7 +74,11 @@ def get_descriptors(img):
 
 def main():
     image_name = sys.argv[1]
+
+    # Convert first image in grayscale
     img1 = cv2.imread(image_name, cv2.IMREAD_GRAYSCALE)
+
+    # Get the discriptors
     kp1, des1 = get_descriptors(img1)
 
     image_name = sys.argv[2]

@@ -25,7 +25,6 @@
 	</head>
 	
 	<body>
-	
 		<div class="wrapper">
 		
 			<!-- header -->
@@ -69,26 +68,25 @@
 				</nav>
 			</header>
 			{% load img_tag %}
-              <div>
-            Aadhar Number : {{user.username}}<br>
-            {% for i in aadhar %}
-            {% if i.Aadhar_Number|stringformat:"s" == user.username %}
-                Name : {{i.fName}} {{i.mName}} {{i.lName}}<br>
-				Picture : 
-				{% comment %} <img src="../../../dms/images/800px-Ada_Lovelace_portrait.jpg"><br> {% endcomment %}
-				{%with img_src=i.Image|modify_url%}
-					<img src="{% static img_src %}" width="100px" height="100px">
-				{%endwith%}
-				<br>
-				Age : {{i.Age}}<br>
-				sex : {{i.Sex}}<br>
-				Date of birth : {{i.DOB}}<br>
-				Mobile Number : {{i.Mobile_NUmber}}<br>
-				Enrollment Number : {{i.Enrollment_Number}}<br>
-				Address : {{i.Street}}, {{i.city}} ,{{i.pincode}}<br>
-               {% endif %}
-            {% endfor %}
-		</div>
+            <div>
+				Aadhar Number : {{user.username}}<br>
+				{% for i in aadhar %}
+					{% if i.Aadhar_Number|stringformat:"s" == user.username %}
+						Name : {{i.fName}} {{i.mName}} {{i.lName}}<br>
+						Picture : 
+						{%with img_src=i.Image|modify_url%}
+							<img src="{% static img_src %}" width="100px" height="100px">
+						{%endwith%}
+						<br>
+						Age : {{i.Age}}<br>
+						sex : {{i.Sex}}<br>
+						Date of birth : {{i.DOB}}<br>
+						Mobile Number : {{i.Mobile_NUmber}}<br>
+						Enrollment Number : {{i.Enrollment_Number}}<br>
+						Address : {{i.Street}}, {{i.city}} ,{{i.pincode}}<br>
+					{% endif %}
+				{% endfor %}
+			</div>
 			<!-- footer -->
 			<footer>
 				<div class="container">

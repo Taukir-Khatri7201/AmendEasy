@@ -51,7 +51,7 @@
 import numpy as np
 #import math
 #import scipy.ndimage
-from .frequest import frequest
+from frequest import frequest
 
 
 def ridge_freq(im, mask, orient, blksze, windsze, minWaveLength, maxWaveLength):
@@ -73,8 +73,14 @@ def ridge_freq(im, mask, orient, blksze, windsze, minWaveLength, maxWaveLength):
     ind = np.array(ind)
     ind = ind[1, :]
 
+    # here ind will contain indices of points for which frequency(value) is > 0
+    # for example: [[0. 0. 0. 0. 0. 2. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0.]]
+    # (array([0, 0]), array([5, 8]))
+    # [[0 0]
+    # [5 8]]
+    # [5 8]
     non_zero_elems_in_freq = freq_1d[0][ind]
 
+    # getting mean of these non zero values
     meanfreq = np.mean(non_zero_elems_in_freq)
-    medianfreq = np.median(non_zero_elems_in_freq)
     return(freq, meanfreq)

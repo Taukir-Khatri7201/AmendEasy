@@ -18,7 +18,6 @@ def index(request):
 
 def registration(request):
     if request.method == 'POST':
-
         # Getting Form Data
         aadhar = int(request.POST.get("aadhar"))
         password = request.POST.get("password")
@@ -38,7 +37,6 @@ def registration(request):
 
         # Then Check if Password and Confirm Passwords are matching or not
         if password == re_pass:
-
             # Getting all the available aadhars
             data = Aadhar_data.values_list()
             aadhar_numbers = [i[0] for i in data]
@@ -385,8 +383,11 @@ def voterid1(request):
 
 
 def display_aadhar(request):
-    aadhar = Aadhar.objects.all()
-    return render(request, 'dms/display_aadhar.html', {'aadhar': aadhar})
+    if request.user.is_authenticated:
+        aadhar = Aadhar.objects.all()
+        return render(request, 'dms/display_aadhar.html', {'aadhar': aadhar})
+    messages.info(request, "Please log in first.")
+    return redirect('login')
 
 
 def display_pancard(request):
@@ -501,7 +502,7 @@ def adminSignup(request):
                 return redirect("adminLogin")
             else:
                 messages.error(
-                    request, "Fingerprint did not match with actual fingerprint...Please try again with another fingerprint...")
+                    request, "Fingerprint did not match with actual fingerprint... Please try again with another fingerprint...")
                 return redirect("adminSignup")
         else:
             messages.error(request, "Passwords do not match...")
